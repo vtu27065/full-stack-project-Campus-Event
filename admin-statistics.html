@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head"></head>
+<body class="bg-gray-50">
+<div th:replace="fragments/admin-navbar :: admin-navbar"></div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Event Statistics</h1>
+        <p class="text-gray-600">Analytics and insights for campus events</p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="opacity-90">Total Events</p>
+                    <h3 class="text-3xl font-bold" th:text="${totalEvents}">0</h3>
+                </div>
+                <i class="fas fa-calendar-alt text-4xl opacity-50"></i>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="opacity-90">Total Registrations</p>
+                    <h3 class="text-3xl font-bold" th:text="${#lists.size(stats)}">0</h3>
+                </div>
+                <i class="fas fa-users text-4xl opacity-50"></i>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="opacity-90">Average Participation</p>
+                    <h3 class="text-3xl font-bold" th:text="${totalEvents > 0 ? #lists.size(stats) / totalEvents : 0}">0</h3>
+                </div>
+                <i class="fas fa-chart-line text-4xl opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Statistics Table -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-xl font-bold text-gray-800">
+                <i class="fas fa-chart-bar mr-2 text-primary"></i>
+                Event Registration Statistics
+            </h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Registrations</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capacity Utilization</th>
+                </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                <tr th:each="stat : ${stats}">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900" th:text="${stat[0].name}">Event Name</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${stat[0].eventType}">Type</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${stat[0].department}">Department</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-semibold text-gray-900" th:text="${stat[1]} + ' students'">0 students</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-primary h-2.5 rounded-full"
+                                 th:style="'width: ' + (${stat[0].maxCapacity != null ? (stat[1] / stat[0].maxCapacity * 100) : (stat[1] > 0 ? 50 : 0)} + '%'"></div>
+                        </div>
+                        <span class="text-xs text-gray-500 mt-1">
+                                    <span th:text="${stat[0].maxCapacity != null ? (stat[1] / stat[0].maxCapacity * 100) : (stat[1] > 0 ? 'Popular' : 'No')} + '%'">0%</span>
+                                    <span th:if="${stat[0].maxCapacity != null}"> of capacity</span>
+                                </span>
+                    </td>
+                </tr>
+                <tr th:if="${stats.empty}">
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                        <i class="fas fa-chart-line text-4xl mb-2"></i>
+                        <p>No registration data available</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
